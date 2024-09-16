@@ -1,0 +1,4511 @@
+{
+	"info": {
+		"_postman_id": "aa2d1c36-085c-455f-9185-a6e32cb2d3fd",
+		"name": "Tuum's API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37250225",
+		"_collection_link": "https://tuum77.postman.co/workspace/Tuum-Workspace~d6a186d6-fbe8-4c62-ad72-9496ba2d8df7/collection/37250225-aa2d1c36-085c-455f-9185-a6e32cb2d3fd?action=share&source=collection_link&creator=37250225"
+	},
+	"item": [
+		{
+			"name": "authorization",
+			"item": [
+				{
+					"name": "Authorise employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const Response = pm.response.json();",
+									"const authToken = Response.data.token;",
+									"",
+									"pm.environment.set(\"authToken\", authToken);",
+									"",
+									"pm.test(\"The status code should be 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response body should have value\", function () {",
+									"    pm.expect(Response.errors).to.eql(null);",
+									"    pm.expect(Response.validationErrors).to.eql(null);",
+									"    pm.expect(Response.data).to.be.an('object');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 300ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);",
+									"});",
+									"",
+									"const Ajv = require('ajv'); ",
+									"const ajv = new Ajv();",
+									"const schema = {",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+									"    \"type\": \"object\",",
+									"        propertise: {",
+									"",
+									"            \"error\":{\"type\": [\"array\", \"null\"] },",
+									"            \"validationErrors\": {\"type\": [\"array\", \"null\"]},",
+									"            \"data\": {",
+									"                \"type\": \"object\",",
+									"                propertise: {",
+									"                    \"token\": {\"type\": \"string\"",
+									"                }",
+									"                ",
+									"                }",
+									"        }",
+									"        }",
+									"}",
+									"",
+									"const validate = ajv.compile(schema);",
+									"const valid = validate(pm.response.json());",
+									"",
+									"pm.test('The Schema should be valid', function() {",
+									"  pm.expect(valid).to.be.true;",
+									"});",
+									"",
+									"if (!valid) {",
+									"  console.log(validate.errors);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "x-auth-token",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "{{apiKey}}",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-channel-code",
+								"value": "SYSTEM",
+								"description": "Channel code"
+							},
+							{
+								"key": "x-tenant-code",
+								"value": "MB",
+								"description": "Tenant code"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"description": "Accept language"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"csrfToken\": \"\",\n  \"username\": \"modular.system\",\n  \"password\": \"pass\",\n  \"tenantCode\": \"\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/v1/employees/authorise",
+							"host": [
+								"{{auth_base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"employees",
+								"authorise"
+							]
+						},
+						"description": "Validates employee credentials and returns JSON Web Token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "persons",
+			"item": [
+				{
+					"name": "create person",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"const responseData = response.data;",
+											"const requestBody = JSON.parse(pm.request.body.raw);",
+											"",
+											"",
+											"pm.test(\"To retrive the Person ID and set as a collection variable\", function () {",
+											"    const personId = response.data.personId;",
+											"    pm.environment.set(\"personId\", personId);",
+											"});",
+											"",
+											"pm.test(\"The response status code should be 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 400ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(400);",
+											"});",
+											"pm.test(\"All errors in the response should return null\", function () {",
+											"  pm.expect(response.errors).to.be.null;",
+											"  pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(",
+											"  \"There should be a person ID that is not empty and an Active statusCode\",",
+											"  function () {",
+											"    const dataProp = response.data;",
+											"    pm.expect(dataProp.personId).to.not.be.empty;",
+											"    pm.expect(dataProp.statusCode).to.equal(\"ACTIVE\");",
+											"  },",
+											");",
+											"",
+											"pm.test(",
+											"  \"The personalInfo object in the response body should match the personalInfo object in the request payload\",",
+											"  function () {",
+											"    const personalInfo = response.data.personalInfo;",
+											"    pm.expect(personalInfo)",
+											"      .to.have.property(\"personTypeCode\")",
+											"      .that.equals(requestBody.personTypeCode);",
+											"",
+											"    pm.expect(personalInfo)",
+											"      .to.have.property(\"givenName\")",
+											"      .that.equals(requestBody.givenName);",
+											"",
+											"    pm.expect(personalInfo)",
+											"      .to.have.property(\"surname\")",
+											"      .that.equals(requestBody.surname);",
+											"  },",
+											");",
+											"",
+											"const personalInfoSchema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"personTypeCode\": { \"type\": \"string\" },",
+											"    \"givenName\": { \"type\": \"string\" },",
+											"    \"middleName\": { \"type\": [\"string\", \"null\"]},",
+											"    \"surname\": { \"type\": \"string\" },",
+											"    \"name\": { \"type\": [\"string\", \"null\"]},",
+											"    \"email\": { \"type\": [\"string\", \"null\"], \"format\": \"email\" },",
+											"    \"phoneNumber\": { \"type\": [\"string\", \"null\"]},",
+											"    \"phoneCountryCode\": { \"type\": [\"string\", \"null\"]},",
+											"    \"residencyCountryCode\": { \"type\": [\"string\", \"null\"]},",
+											"    \"sex\": { \"type\": [\"string\", \"null\"]},",
+											"    \"nationality\": { \"type\": [\"string\", \"null\"]},",
+											"    \"dependantPersons\": { \"type\": [\"integer\", \"null\"] },",
+											"    \"legalForm\": { \"type\": [\"string\", \"null\"]}",
+											"  },",
+											"  \"required\": [\"personTypeCode\", \"givenName\", \"surname\"]",
+											"};",
+											"",
+											"const additionalInfoSchema={",
+											"    \"type\": \"object\",",
+											"    \"properties\" :{",
+											"        \"idNumberId\":{\"type\": \"string\"},",
+											"        \"personId\":{\"type\": \"string\"},",
+											"        \"idNumber\":{\"type\": \"string\"},",
+											"        \"idCountryCode\":{\"type\": \"string\"},",
+											"        \"validityRange\":{",
+											"            \"type\": \"object\",",
+											"            \"properties\":{",
+											"                \"startTime\":{\"type\": \"string\",\"format\":\"date\"},",
+											"                \"endTime\":{\"type\": [\"string\",\"null\"]}",
+											"            }",
+											"        },",
+											"        \"primary\":{\"type\": \"boolean\"}",
+											"    }",
+											"}; ",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"",
+											"const validatePersonalInfo = ajv.compile(personalInfoSchema);",
+											"const validateAdditionalInfo = ajv.compile(additionalInfoSchema);",
+											"",
+											"pm.test(\"The personal info in the response should match the schema\", function () {",
+											"    const isPersonalInfoValid = validatePersonalInfo(responseData.personalInfo);",
+											"    pm.expect(isPersonalInfoValid, \"Personal info should match schema\").to.be.true;",
+											"});",
+											"",
+											"pm.test(\"The additional info in the response should match the schema\", function () {",
+											"    const isAdditionalInfoValid = validateAdditionalInfo(responseData.additionalInfo);",
+											"    pm.expect(isAdditionalInfoValid, \"Additional info should match schema\").to.be.true;",
+											"});",
+											"",
+											"pm.test(",
+											"  \"The identificationNumbers object in the response body should match the identificationNumber object in the request body\",",
+											"  function () {",
+											"    const identificationNumProp = response.data.identificationNumbers[0];",
+											"    const identificationNumPayload = requestBody.identificationNumber;",
+											"",
+											"    pm.expect(identificationNumProp).to.be.an(\"object\");",
+											"    pm.expect(identificationNumProp).to.have.property(\"idNumber\", identificationNumPayload.idNumber);",
+											"    pm.expect(identificationNumProp).to.have.property(\"idCountryCode\", identificationNumPayload.idCountryCode);",
+											"    pm.expect(identificationNumProp).to.have.property(\"primary\", identificationNumPayload.primary);",
+											"  }",
+											");",
+											"",
+											"",
+											"pm.test(",
+											"  \"The address property should be an array and should match the address property in the request body\",",
+											"  function () {",
+											"    const addressProp = response.data.addresses[0];",
+											"    const addressPayload = requestBody.addresses[0];",
+											"",
+											"    pm.expect(addressProp).to.be.an(\"object\");",
+											"    pm.expect(addressProp).to.have.property(\"addressTypeCode\", addressPayload.addressTypeCode);",
+											"    pm.expect(addressProp).to.have.property(\"countryCode\", addressPayload.countryCode);",
+											"    pm.expect(addressProp).to.have.property(\"cityCounty\", addressPayload.cityCounty);",
+											"    pm.expect(addressProp).to.have.property(\"street1\", addressPayload.street1);",
+											"  }",
+											");",
+											"",
+											"",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(100000 + Math.random() * 900000);",
+											"};",
+											"const newIdNum = randomNumber();",
+											"pm.collectionVariables.set(\"newIdNum\", newIdNum);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"personTypeCode\": \"P\",\n    \"identificationNumber\": {\n        \"primary\": true,\n        \"idNumber\": \"{{newIdNum}}\",  \n        \"idCountryCode\": \"EE\"\n    },\n    \"addresses\": [\n        {\n            \"addressTypeCode\": \"R\",\n            \"countryCode\": \"EE\",\n            \"cityCounty\": \"Tallinn\",\n            \"street1\": \"Address\"\n        }\n    ],\n    \"givenName\": \"Test\",\n    \"surname\": \"User\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v2/persons",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"persons"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - Invalid \"personTypeCode\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(response.errors).not.to.be.null;",
+											"  pm.expect(response.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(response.errors).to.include(\"err.personTypeInvalid\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = response.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"",
+											"    if (errorDetail.errors && errorDetail.errors.length > 0) {",
+											"      let errorCode = errorDetail.errors[0].code; ",
+											"",
+											"      let errorMessage = errorDetail.errors[0].translations.en; ",
+											"",
+											"      if (errorCode === \"err.personTypeInvalid\" && errorMessage === \"Add valid person type.\" ) {",
+											"        validationErrorFound = true; ",
+											"      }",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"errors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"string\"",
+											"            }",
+											"        },",
+											"        \"validationErrors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"field\": {",
+											"                        \"type\": [\"string\", \"null\"]",
+											"                    },",
+											"                    \"errors\": {",
+											"                        \"type\": \"array\",",
+											"                        \"items\": {",
+											"                            \"type\": \"object\",",
+											"                            \"properties\": {",
+											"                                \"code\": {",
+											"                                    \"type\": \"string\"",
+											"                                },",
+											"                                \"translations\": {",
+											"                                    \"type\": \"object\"",
+											"                                },",
+											"                                \"additionalProperties\": {",
+											"                                    \"type\": \"object\"",
+											"                                }",
+											"                            },",
+											"                            \"required\": [\"code\"]",
+											"                        }",
+											"                    }",
+											"                },",
+											"                \"required\": [\"field\", \"errors\"]",
+											"            }",
+											"        }",
+											"    },",
+											"    \"required\": [\"errors\", \"validationErrors\"]",
+											"}",
+											"",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(100000 + Math.random() * 900000);",
+											"};",
+											"const newIdNum = randomNumber();",
+											"pm.collectionVariables.set(\"newIdNum\", newIdNum);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"personTypeCode\": \"H\",\n    \"identificationNumber\": {\n        \"primary\": true,\n        \"idNumber\": \"{{newIdNum}}\",  \n        \"idCountryCode\": \"MM\"\n    },\n    \"addresses\": [\n        {\n            \"addressTypeCode\": \"R\",\n            \"countryCode\": \"EE\",\n            \"cityCounty\": \"Tallinn\",\n            \"street1\": \"Address\"\n        }\n    ],\n    \"givenName\": \"Test\",\n    \"surname\": \"User\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v2/persons",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"persons"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - Duplicate \"idNumber\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(jsonData.errors).not.to.be.null;",
+											"  pm.expect(jsonData.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(jsonData.errors).to.include(\"err.idNumberExists\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = jsonData.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"",
+											"    if (errorDetail.errors && errorDetail.errors.length > 0) {",
+											"      let errorCode = errorDetail.errors[0].code; ",
+											"",
+											"      let errorMessage = errorDetail.errors[0].translations.en; ",
+											"",
+											"      if (errorCode === \"err.idNumberExists\" && errorMessage === \"The ID number already exists.\" ) {",
+											"        validationErrorFound = true; ",
+											"      }",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"errors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"string\"",
+											"            }",
+											"        },",
+											"        \"validationErrors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"field\": {",
+											"                        \"type\": [\"string\", \"null\"]",
+											"                    },",
+											"                    \"errors\": {",
+											"                        \"type\": \"array\",",
+											"                        \"items\": {",
+											"                            \"type\": \"object\",",
+											"                            \"properties\": {",
+											"                                \"code\": {",
+											"                                    \"type\": \"string\"",
+											"                                },",
+											"                                \"translations\": {",
+											"                                    \"type\": \"object\"",
+											"                                },",
+											"                                \"additionalProperties\": {",
+											"                                    \"type\": \"object\"",
+											"                                }",
+											"                            },",
+											"                            \"required\": [\"code\"]",
+											"                        }",
+											"                    }",
+											"                },",
+											"                \"required\": [\"field\", \"errors\"]",
+											"            }",
+											"        }",
+											"    },",
+											"    \"required\": [\"errors\", \"validationErrors\"]",
+											"}",
+											"",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"personTypeCode\": \"P\",\n    \"identificationNumber\": {\n        \"primary\": true,\n        \"idNumber\": \"167630\",    \n        \"idCountryCode\": \"EE\"\n    },\n    \"addresses\": [\n        {\n            \"addressTypeCode\": \"R\",\n            \"countryCode\": \"EE\",\n            \"cityCounty\": \"Tallinn\",\n            \"street1\": \"Address\"\n        }\n    ],\n    \"givenName\": \"Test\",\n    \"surname\": \"User\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v2/persons",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"persons"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(100000 + Math.random() * 900000);",
+											"};",
+											"const newIdNum = randomNumber();",
+											"pm.collectionVariables.set(\"newIdNum\", newIdNum);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"personTypeCode\": \"P\",\n    \"identificationNumber\": {\n        \"primary\": true,\n        \"idNumber\": \"{{newIdNum}}\",  \n        \"idCountryCode\": \"EE\"\n    },\n    \"addresses\": [\n        {\n            \"addressTypeCode\": \"R\",\n            \"countryCode\": \"EE\",\n            \"cityCounty\": \"Tallinn\",\n            \"street1\": \"Address\"\n        }\n    ],\n    \"givenName\": \"Test\",\n    \"surname\": \"User\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v2/persons",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"persons"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Find person",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"const responseData = response.data;",
+											"",
+											"pm.test(\"The response status code should be 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return null\", function () {",
+											"  pm.expect(response.errors).to.be.null;",
+											"  pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"const personalInfoSchema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"personTypeCode\": { \"type\": \"string\" },",
+											"    \"givenName\": { \"type\": \"string\" },",
+											"    \"middleName\": { \"type\": [\"string\", \"null\"]},",
+											"    \"surname\": { \"type\": \"string\" },",
+											"    \"name\": { \"type\": [\"string\", \"null\"]},",
+											"    \"email\": { \"type\": [\"string\", \"null\"], \"format\": \"email\" },",
+											"    \"phoneNumber\": { \"type\": [\"string\", \"null\"]},",
+											"    \"phoneCountryCode\": { \"type\": [\"string\", \"null\"]},",
+											"    \"residencyCountryCode\": { \"type\": [\"string\", \"null\"]},",
+											"    \"sex\": { \"type\": [\"string\", \"null\"]},",
+											"    \"nationality\": { \"type\": [\"string\", \"null\"]},",
+											"    \"dependantPersons\": { \"type\": [\"integer\", \"null\"] },",
+											"    \"legalForm\": { \"type\": [\"string\", \"null\"]}",
+											"  },",
+											"  \"required\": [\"personTypeCode\", \"givenName\", \"surname\"]",
+											"};",
+											"",
+											"const additionalInfoSchema={",
+											"    \"type\": \"object\",",
+											"    \"properties\" :{",
+											"        \"idNumberId\":{\"type\": \"string\"},",
+											"        \"personId\":{\"type\": \"string\"},",
+											"        \"idNumber\":{\"type\": \"string\"},",
+											"        \"idCountryCode\":{\"type\": \"string\"},",
+											"        \"validityRange\":{",
+											"            \"type\": \"object\",",
+											"            \"properties\":{",
+											"                \"startTime\":{\"type\": \"string\",\"format\":\"date\"},",
+											"                \"endTime\":{\"type\": [\"string\",\"null\"]}",
+											"            }",
+											"        },",
+											"        \"primary\":{\"type\": \"boolean\"}",
+											"    }",
+											"}; ",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"",
+											"const validatePersonalInfo = ajv.compile(personalInfoSchema);",
+											"const validateAdditionalInfo = ajv.compile(additionalInfoSchema);",
+											"",
+											"pm.test(\"The personal info in the response should match the schema\", function () {",
+											"    const isPersonalInfoValid = validatePersonalInfo(responseData.personalInfo);",
+											"    pm.expect(isPersonalInfoValid, \"Personal info should match schema\").to.be.true;",
+											"});",
+											"",
+											"pm.test(\"The additional info in the response should match the schema\", function () {",
+											"    const isAdditionalInfoValid = validateAdditionalInfo(responseData.additionalInfo);",
+											"    pm.expect(isAdditionalInfoValid, \"Additional info should match schema\").to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v1/persons/:personId/details",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"persons",
+										":personId",
+										"details"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorized",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v1/persons/:personId/details",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"persons",
+										":personId",
+										"details"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Parameter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).to.be.null; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"object\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v1/persons/{personId}/details",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"persons",
+										"{personId}",
+										"details"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						},
+						{
+							"name": "Empty Parameter",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(100000 + Math.random() * 900000);",
+											"};",
+											"const newIdNum = randomNumber();",
+											"pm.collectionVariables.set(\"newIdNum\", newIdNum);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											" const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).to.be.null; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    const response = pm.response.json();",
+											"        pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"object\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{person_base_url}}/api/v1/persons/{personId}/details",
+									"host": [
+										"{{person_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"persons",
+										"{personId}",
+										"details"
+									]
+								},
+								"description": "Creates a new private or legal person"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "account",
+			"item": [
+				{
+					"name": "create account",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const Response = pm.response.json();",
+											"const accountId = Response.data.accountId;",
+											"const ibanNum = Response.data.iban;",
+											"",
+											"const responseData = Response.data;",
+											"",
+											"pm.environment.set(\"accountId\", accountId);",
+											"pm.environment.set(\"ibanNum\", ibanNum);",
+											"",
+											"",
+											"pm.test(\"The response status code should be 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"pm.test(\"The response body should be an object\", function () {",
+											"  pm.expect(Response).to.be.an(\"object\");",
+											"});",
+											"",
+											"pm.test(\"All error property shoulld return an empty\", function () {",
+											"  pm.expect(Response.errors).to.be.null;",
+											"  pm.expect(Response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(",
+											"  \"There should be an account ID that is not null and an Active statusCode\",",
+											"  function () {",
+											"    const dataProp = Response.data;",
+											"    pm.expect(dataProp).to.have.property(\"accountId\").to.not.equals(null);",
+											"    pm.expect(dataProp).to.have.property(\"statusCode\").to.equals(\"ACTIVE\");",
+											"  },",
+											");",
+											"",
+											"pm.test(",
+											"  \"The Response should have neccesaary data property in the Data object\",",
+											"  function () {",
+											"    const dataProp = Response.data;",
+											"",
+											"    pm.expect(dataProp).to.have.property(\"personId\");",
+											"    pm.expect(dataProp).to.have.property(\"activationDate\");",
+											"    pm.expect(dataProp).to.have.property(\"accountName\");",
+											"    pm.expect(dataProp).to.have.property(\"personName\");",
+											"    pm.expect(dataProp).to.have.property(\"iban\");",
+											"    pm.expect(dataProp).to.have.property(\"accountNumbers\");",
+											"    pm.expect(dataProp).to.have.property(\"balances\");",
+											"  },",
+											");",
+											"",
+											"",
+											"pm.test(",
+											"  \"The accountNumbers property should be an array of json objects and each Json object should contain the important property\",",
+											"  function () {",
+											"    const accountNumbers = Response.data.accountNumbers;",
+											"    pm.expect(accountNumbers).to.be.an(\"array\").that.is.not.empty;",
+											"",
+											"        accountNumbers.forEach(function(account){",
+											"  pm.expect(account).to.have.property(\"accountNumberId\");",
+											"    pm.expect(account).to.have.property(\"accountId\");",
+											"    pm.expect(account).to.have.property(\"statusCode\");",
+											"    pm.expect(account).to.have.property(\"accountNumber\");",
+											"    pm.expect(account.accountNumber).to.have.property(\"value\");",
+											"    pm.expect(account.accountNumber).to.have.property(\"type\");",
+											"        })",
+											"  ",
+											"  },",
+											");",
+											"",
+											"const balancesSchema= {",
+											"      \"type\": \"array\",",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"balanceId\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"accountId\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"currencyCode\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"balanceAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"reservedAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"overdraftLimitAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"defaultCurrencyCode\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"availableBalanceInDefaultCcy\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"negativeBalanceStartDate\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          },",
+											"          \"availableBalanceAmount\": {",
+											"            \"type\": \"number\",",
+											"          }",
+											"        },",
+											"        \"required\": [\"balanceId\", \"accountId\", \"currencyCode\", \"balanceAmount\", \"defaultCurrencyCode\"]",
+											"      }",
+											"    }",
+											"",
+											"const accountNumbersSchema= {",
+											"  \"type\": \"array\",",
+											"  \"items\": {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"      \"accountNumberId\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"accountId\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"accountNumber\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"value\", \"type\"]",
+											"      },",
+											"      \"countryCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"financialInstitutionId\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"value\", \"type\"]",
+											"      },",
+											"      \"accountNumberSubtype\": {",
+											"        \"type\": [\"string\", \"null\"]",
+											"      },",
+											"      \"defaultCurrencyCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"financialInstitutionIdTypeCode\": {",
+											"        \"type\": [\"string\", \"null\"]",
+											"      },",
+											"      \"statusCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"validityRange\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"startTime\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          },",
+											"          \"endTime\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"startTime\", \"endTime\"]",
+											"      }",
+											"    },",
+											"    \"required\": [",
+											"      \"accountNumberId\",",
+											"      \"accountId\",",
+											"      \"accountNumber\",",
+											"      \"countryCode\",",
+											"      \"financialInstitutionId\",",
+											"      \"accountNumberSubtype\",",
+											"      \"defaultCurrencyCode\",",
+											"      \"financialInstitutionIdTypeCode\",",
+											"      \"statusCode\",",
+											"      \"validityRange\"",
+											"    ]",
+											"  }",
+											"}",
+											"      ",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"",
+											"const validateAccountNumbers= ajv.compile(accountNumbersSchema);",
+											"const validateBalances = ajv.compile(balancesSchema);",
+											"",
+											"pm.test(\"The account Numbers structure in the response should match the schema\", function () {",
+											"    const accountNumbersValid = validateAccountNumbers(responseData.accountNumbers);",
+											"    pm.expect(accountNumbersValid).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"The balance structure in the response should match the schema\", function () {",
+											"    const isBalancesValid = validateBalances(responseData.balances);",
+											"    pm.expect(isBalancesValid, \"The balance structure should match schema\").to.be.true;",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accountTypeCode\": \"CURRENCY \",\n    \"masterAccountId\": \"ID-1001\",\n    \"accountName\": \"Test User\",\n    \"personName\": \"Test User\",\n    \"residencyCountryCode\": \"DE\",\n    \"customerGroupCode\": \"GROUP_A\",\n    \"priceListTypeCode\": \"STANDARD\",\n    \"currencyCode\": \"EUR\",\n    \"accountInterestRate\": 10,\n    \"personTypeCode\": \"P\",\n    \"intraOrgCode\": \"SAVINGS\",\n    \"representatives\": [\n        {\n            \"personId\": \"ID-1001\",\n            \"accountRightCode\": \"ALL\",\n            \"limits\": [\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"DAILY\"\n                },\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"MONTHLY \"\n                }\n            ]\n        }\n    ],\n    \"accountTypeSetupCode\": \"EXTERNAL_VIRTUAL\",\n    \"serviceProviderCode\": \"TUUM\",\n    \"accountNumbers\": [\n        {\n            \"accountNumber\": {\n                \"value\": \"{{$randomBankAccountIban}}\",\n                \"type\": \"IBAN\"\n            },\n            \"countryCode\": \"EE\",\n            \"financialInstitutionId\": {\n                \"value\": \"MAINDE2XXXX\",\n                \"type\": \"BIC\"\n            },\n            \"defaultCurrencyCode\": \"EUR\"\n        }\n    ],\n    \"limits\": [\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"DAILY\"\n        },\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"MONTHLY \"\n        }\n    ],\n    \"interestMethodAssignmentCode\": \"EXTRA15\",\n    \"accountClassCode\": \"SAFEGUARDED\",\n    \"taxResidencyCountryCode\": \"DE\",\n    \"jurisdictionCountryCode\": \"ES\",\n    \"accessRestricted\": false,\n    \"numberingSequenceKey\": \"PERSON_DDA_ACCOUNT\",\n    \"bicKey\": \"RETAIL\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/persons/:personId/accounts",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"persons",
+										":personId",
+										"accounts"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorised",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accountTypeCode\": \"CURRENCY \",\n    \"masterAccountId\": \"ID-1001\",\n    \"accountName\": \"Test User\",\n    \"personName\": \"Test User\",\n    \"residencyCountryCode\": \"DE\",\n    \"customerGroupCode\": \"GROUP_A\",\n    \"priceListTypeCode\": \"STANDARD\",\n    \"currencyCode\": \"EUR\",\n    \"accountInterestRate\": 10,\n    \"personTypeCode\": \"P\",\n    \"intraOrgCode\": \"SAVINGS\",\n    \"representatives\": [\n        {\n            \"personId\": \"ID-1001\",\n            \"accountRightCode\": \"ALL\",\n            \"limits\": [\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"DAILY\"\n                },\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"MONTHLY \"\n                }\n            ]\n        }\n    ],\n    \"accountTypeSetupCode\": \"EXTERNAL_VIRTUAL\",\n    \"serviceProviderCode\": \"TUUM\",\n    \"accountNumbers\": [\n        {\n            \"accountNumber\": {\n                \"value\": \"{{$randomBankAccountIban}}\",\n                \"type\": \"IBAN\"\n            },\n            \"countryCode\": \"EE\",\n            \"financialInstitutionId\": {\n                \"value\": \"MAINDE2XXXX\",\n                \"type\": \"BIC\"\n            },\n            \"defaultCurrencyCode\": \"EUR\"\n        }\n    ],\n    \"limits\": [\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"DAILY\"\n        },\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"MONTHLY \"\n        }\n    ],\n    \"interestMethodAssignmentCode\": \"EXTRA15\",\n    \"accountClassCode\": \"SAFEGUARDED\",\n    \"taxResidencyCountryCode\": \"DE\",\n    \"jurisdictionCountryCode\": \"ES\",\n    \"accessRestricted\": false,\n    \"numberingSequenceKey\": \"PERSON_DDA_ACCOUNT\",\n    \"bicKey\": \"RETAIL\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/persons/:personId/accounts",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"persons",
+										":personId",
+										"accounts"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - Invalid \"accountTypeCode\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(response.errors).not.to.be.null;",
+											"  pm.expect(response.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(response.errors).to.include(\"err.validationErrors\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = response.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"",
+											"    field = errorDetail.field;",
+											"    error = errorDetail.errors[0]",
+											"",
+											"    if(field === 'accountTypeCode' && error.code === 'err.invalidValue'){",
+											"        validationErrorFound = true; ",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"errors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"string\"",
+											"            }",
+											"        },",
+											"        \"validationErrors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"field\": {",
+											"                        \"type\": [\"string\", \"null\"]",
+											"                    },",
+											"                    \"errors\": {",
+											"                        \"type\": \"array\",",
+											"                        \"items\": {",
+											"                            \"type\": \"object\",",
+											"                            \"properties\": {",
+											"                                \"code\": {",
+											"                                    \"type\": \"string\"",
+											"                                },",
+											"                                \"translations\": {",
+											"                                    \"type\": \"object\"",
+											"                                },",
+											"                                \"additionalProperties\": {",
+											"                                    \"type\": \"object\"",
+											"                                }",
+											"                            },",
+											"                            \"required\": [\"code\"]",
+											"                        }",
+											"                    }",
+											"                },",
+											"                \"required\": [\"field\", \"errors\"]",
+											"            }",
+											"        }",
+											"    },",
+											"    \"required\": [\"errors\", \"validationErrors\"]",
+											"}",
+											"",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(100000 + Math.random() * 900000);",
+											"};",
+											"const newIdNum = randomNumber();",
+											"pm.collectionVariables.set(\"newIdNum\", newIdNum);",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									},
+									{
+										"key": "x-auth-token",
+										"value": "{{authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accountTypeCode\": \"tester \",\n    \"masterAccountId\": \"ID-1001\",\n    \"accountName\": \"Test User\",\n    \"personName\": \"Test User\",\n    \"residencyCountryCode\": \"DE\",\n    \"customerGroupCode\": \"GROUP_A\",\n    \"priceListTypeCode\": \"STANDARD\",\n    \"currencyCode\": \"EUR\",\n    \"accountInterestRate\": 10,\n    \"personTypeCode\": \"P\",\n    \"intraOrgCode\": \"SAVINGS\",\n    \"representatives\": [\n        {\n            \"personId\": \"ID-1001\",\n            \"accountRightCode\": \"ALL\",\n            \"limits\": [\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"DAILY\"\n                },\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"MONTHLY \"\n                }\n            ]\n        }\n    ],\n    \"accountTypeSetupCode\": \"EXTERNAL_VIRTUAL\",\n    \"serviceProviderCode\": \"TUUM\",\n    \"accountNumbers\": [\n        {\n            \"accountNumber\": {\n                \"value\": \"{{$randomBankAccountIban}}\",\n                \"type\": \"IBAN\"\n            },\n            \"countryCode\": \"EE\",\n            \"financialInstitutionId\": {\n                \"value\": \"MAINDE2XXXX\",\n                \"type\": \"BIC\"\n            },\n            \"defaultCurrencyCode\": \"EUR\"\n        }\n    ],\n    \"limits\": [\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"DAILY\"\n        },\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"MONTHLY \"\n        }\n    ],\n    \"interestMethodAssignmentCode\": \"EXTRA15\",\n    \"accountClassCode\": \"SAFEGUARDED\",\n    \"taxResidencyCountryCode\": \"DE\",\n    \"jurisdictionCountryCode\": \"ES\",\n    \"accessRestricted\": false,\n    \"numberingSequenceKey\": \"PERSON_DDA_ACCOUNT\",\n    \"bicKey\": \"RETAIL\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/persons/:personId/accounts",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"persons",
+										":personId",
+										"accounts"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - IBAN number duplicated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(jsonData.errors).not.to.be.null;",
+											"  pm.expect(jsonData.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(jsonData.errors).to.include(\"err.accountNumberAlreadyExists\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = jsonData.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"",
+											"    if (errorDetail.errors && errorDetail.errors.length > 0) {",
+											"      let errorCode = errorDetail.errors[0].code; ",
+											"",
+											"      let errorMessage = errorDetail.errors[0].translations.en; ",
+											"",
+											"      if (errorCode === \"err.accountNumberAlreadyExists\") {",
+											"        validationErrorFound = true; ",
+											"      }",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									},
+									{
+										"key": "x-auth-token",
+										"value": "{{authToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"accountTypeCode\": \"CURRENCY \",\n    \"masterAccountId\": \"ID-1001\",\n    \"accountName\": \"Test User\",\n    \"personName\": \"Test User\",\n    \"residencyCountryCode\": \"DE\",\n    \"customerGroupCode\": \"GROUP_A\",\n    \"priceListTypeCode\": \"STANDARD\",\n    \"currencyCode\": \"EUR\",\n    \"accountInterestRate\": 10,\n    \"personTypeCode\": \"P\",\n    \"intraOrgCode\": \"SAVINGS\",\n    \"representatives\": [\n        {\n            \"personId\": \"ID-1001\",\n            \"accountRightCode\": \"ALL\",\n            \"limits\": [\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"DAILY\"\n                },\n                {\n                    \"amount\": {\n                        \"amount\": 1.22,\n                        \"currencyCode\": \"EUR\"\n                    },\n                    \"accountLimitTypeCode\": \"MONTHLY \"\n                }\n            ]\n        }\n    ],\n    \"accountTypeSetupCode\": \"EXTERNAL_VIRTUAL\",\n    \"serviceProviderCode\": \"TUUM\",\n    \"accountNumbers\": [\n        {\n            \"accountNumber\": {\n                \"value\": \"KW38VSBWS8H395S95H95912J630419\",\n                \"type\": \"IBAN\"\n            },\n            \"countryCode\": \"EE\",\n            \"financialInstitutionId\": {\n                \"value\": \"MAINDE2XXXX\",\n                \"type\": \"BIC\"\n            },\n            \"defaultCurrencyCode\": \"EUR\"\n        }\n    ],\n    \"limits\": [\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"DAILY\"\n        },\n        {\n            \"amount\": {\n                \"amount\": 1.22,\n                \"currencyCode\": \"EUR\"\n            },\n            \"accountLimitTypeCode\": \"MONTHLY \"\n        }\n    ],\n    \"interestMethodAssignmentCode\": \"EXTRA15\",\n    \"accountClassCode\": \"SAFEGUARDED\",\n    \"taxResidencyCountryCode\": \"DE\",\n    \"jurisdictionCountryCode\": \"ES\",\n    \"accessRestricted\": false,\n    \"numberingSequenceKey\": \"PERSON_DDA_ACCOUNT\",\n    \"bicKey\": \"RETAIL\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/persons/:personId/accounts",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"persons",
+										":personId",
+										"accounts"
+									],
+									"variable": [
+										{
+											"key": "personId",
+											"value": "{{personId}}"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "find account by Id",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"const responseData = response.data;",
+											"",
+											"pm.test(\"The response status code should be 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return null\", function () {",
+											"  pm.expect(response.errors).to.be.null;",
+											"  pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"",
+											"",
+											"const balancesSchema= {",
+											"      \"type\": \"array\",",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"balanceId\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"accountId\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"currencyCode\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"balanceAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"reservedAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"overdraftLimitAmount\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"defaultCurrencyCode\": {",
+											"            \"type\": \"string\",",
+											"          },",
+											"          \"availableBalanceInDefaultCcy\": {",
+											"            \"type\": \"number\",",
+											"          },",
+											"          \"negativeBalanceStartDate\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          },",
+											"          \"availableBalanceAmount\": {",
+											"            \"type\": \"number\",",
+											"          }",
+											"        },",
+											"        \"required\": [\"balanceId\", \"accountId\", \"currencyCode\", \"balanceAmount\", \"defaultCurrencyCode\"]",
+											"      }",
+											"    }",
+											"",
+											"const accountNumbersSchema= {",
+											"  \"type\": \"array\",",
+											"  \"items\": {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"      \"accountNumberId\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"accountId\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"accountNumber\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"value\", \"type\"]",
+											"      },",
+											"      \"countryCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"financialInstitutionId\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"value\", \"type\"]",
+											"      },",
+											"      \"accountNumberSubtype\": {",
+											"        \"type\": [\"string\", \"null\"]",
+											"      },",
+											"      \"defaultCurrencyCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"financialInstitutionIdTypeCode\": {",
+											"        \"type\": [\"string\", \"null\"]",
+											"      },",
+											"      \"statusCode\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"validityRange\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"startTime\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          },",
+											"          \"endTime\": {",
+											"            \"type\": [\"string\", \"null\"],",
+											"            \"format\": \"date-time\"",
+											"          }",
+											"        },",
+											"        \"required\": [\"startTime\", \"endTime\"]",
+											"      }",
+											"    },",
+											"    \"required\": [",
+											"      \"accountNumberId\",",
+											"      \"accountId\",",
+											"      \"accountNumber\",",
+											"      \"countryCode\",",
+											"      \"financialInstitutionId\",",
+											"      \"accountNumberSubtype\",",
+											"      \"defaultCurrencyCode\",",
+											"      \"financialInstitutionIdTypeCode\",",
+											"      \"statusCode\",",
+											"      \"validityRange\"",
+											"    ]",
+											"  }",
+											"}",
+											"      ",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"",
+											"const validateAccountNumbers= ajv.compile(accountNumbersSchema);",
+											"const validateBalances = ajv.compile(balancesSchema);",
+											"",
+											"pm.test(\"The account Numbers structure in the response should match the schema\", function () {",
+											"    const accountNumbersValid = validateAccountNumbers(responseData.accountNumbers);",
+											"    pm.expect(accountNumbersValid).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"The balance structure in the response should match the schema\", function () {",
+											"    const isBalancesValid = validateBalances(responseData.balances);",
+											"    pm.expect(isBalancesValid, \"The balance structure should match schema\").to.be.true;",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/accounts/:accountId",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"accounts",
+										":accountId"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorised",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/accounts/accountId",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"accounts",
+										"accountId"
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "invalid account Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											" const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).to.be.null; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    const response = pm.response.json();",
+											"        pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"object\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/accounts/:accountId",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"accounts",
+										":accountId"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "6ghcsvhcs"
+										}
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						},
+						{
+							"name": "empty parameter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											" const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).to.be.null; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    const response = pm.response.json();",
+											"        pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"object\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "",
+										"description": "Request id<br><br><i>Example</i> : ba90131e-4e1b-410d-919d-25f48c963b77"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v4/accounts/accountId",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v4",
+										"accounts",
+										"accountId"
+									]
+								},
+								"description": "Creates a new account for a person"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "transactions",
+			"item": [
+				{
+					"name": "Create account transaction",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"const accountTransactionId = response.data[0].accountTransactionId;",
+											"",
+											"pm.environment.set(\"accountTransactionId\", accountTransactionId);",
+											"",
+											"pm.test(\"Status code  should be 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"The Errors field should be null\", function () {",
+											"    pm.expect(response.errors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"The ValidationErrors field should be null\", function () {",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"The data field should be an array that is not empty\", function () {",
+											"    pm.expect(response.data).to.be.an('array').that.is.not.empty;",
+											"});",
+											"",
+											"",
+											"const dataItem = response.data[0];",
+											"",
+											"pm.test(\"The data item should contain all required fields\", function () {",
+											"    pm.expect(dataItem).to.have.all.keys(",
+											"        'accountTransactionId', 'groupId', 'postingDate', 'valueDate', ",
+											"        'accountId', 'transactionTypeCode', 'transactionSubtypeCode', ",
+											"        'directionCode', 'currencyCode', 'amount', 'initialBalanceAmount', ",
+											"        'filingCode', 'details', 'referenceNumber', 'source', ",
+											"        'contractSource', 'merchantInfo', 'metaInfo', 'createdDTime', ",
+											"        'endToEndId', 'paymentServiceProviderCode', 'transactionDTime', ",
+											"        'reversed', 'virtualAccountId', 'labels', 'counterparty'",
+											"    );",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function randomNumber(){",
+											"    return Math.floor(10000000 + Math.random() * 900000);",
+											"};",
+											"const refNum = randomNumber();",
+											"pm.collectionVariables.set(\"refNum\", refNum);",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "application/json",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "{{$randomUUID}}",
+										"description": "Request id<br><br><i>Example</i> : 0bc43148-c8ea-4765-82f6-56f00ae41f26"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"transactionTypeCode\": \"CARD_PUR\",\n    \"money\": {\n        \"amount\": 10,\n        \"currencyCode\": \"EUR\"\n    },\n     \"referenceNumber\": \"CT{{refNum}}\",\n  \n    \"source\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\"\n    },\n    \"contractSource\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\",\n        \"contractNumber\": \"string\"\n    },\n    \"counterparty\": {\n        \"accountNumbers\": [\n            {\n                \"accountNumber\": {\n                    \"value\": \"{{ibanNum}}\",\n                    \"type\": \"IBAN\"\n                },\n                \"financialInstitutionId\": {\n                    \"value\": \"MAINDE2XXXX\",\n                    \"type\": \"BIC\"\n                }\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v5/accounts/:accountId/transactions",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v5",
+										"accounts",
+										":accountId",
+										"transactions"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Creates a new transaction for an account"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorised",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "{{$randomUUID}}",
+										"description": "Request id<br><br><i>Example</i> : 0bc43148-c8ea-4765-82f6-56f00ae41f26"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"transactionTypeCode\": \"CARD_PUR\",\n    \"money\": {\n        \"amount\": 10,\n        \"currencyCode\": \"EUR\"\n    },\n    \"source\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\"\n    },\n    \"contractSource\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\",\n        \"contractNumber\": \"string\"\n    },\n    \"counterparty\": {\n        \"accountNumbers\": [\n            {\n                \"accountNumber\": {\n                    \"value\": \"{{ibanNum}}\",\n                    \"type\": \"IBAN\"\n                },\n                \"financialInstitutionId\": {\n                    \"value\": \"MAINDE2XXXX\",\n                    \"type\": \"BIC\"\n                }\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v5/accounts/:accountId/transactions",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v5",
+										"accounts",
+										":accountId",
+										"transactions"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Creates a new transaction for an account"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - invalid amount format",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(response.errors).not.to.be.null;",
+											"  pm.expect(response.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(response.errors).to.include(\"Invalid request field: money.amount\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = response.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"    error = errorDetail.errors[0]",
+											"",
+											"    if(error.code === 'Invalid request field: money.amount'){",
+											"        validationErrorFound = true; ",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"errors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"string\"",
+											"            }",
+											"        },",
+											"        \"validationErrors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"field\": {",
+											"                        \"type\": [\"string\", \"null\"]",
+											"                    },",
+											"                    \"errors\": {",
+											"                        \"type\": \"array\",",
+											"                        \"items\": {",
+											"                            \"type\": \"object\",",
+											"                            \"properties\": {",
+											"                                \"code\": {",
+											"                                    \"type\": \"string\"",
+											"                                },",
+											"                                \"translations\": {",
+											"                                    \"type\": \"object\"",
+											"                                },",
+											"                                \"additionalProperties\": {",
+											"                                    \"type\": \"object\"",
+											"                                }",
+											"                            },",
+											"                            \"required\": [\"code\"]",
+											"                        }",
+											"                    }",
+											"                },",
+											"                \"required\": [\"field\", \"errors\"]",
+											"            }",
+											"        }",
+											"    },",
+											"    \"required\": [\"errors\", \"validationErrors\"]",
+											"}",
+											"",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "{{$randomUUID}}",
+										"description": "Request id<br><br><i>Example</i> : 0bc43148-c8ea-4765-82f6-56f00ae41f26"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"transactionTypeCode\": \"CARD_PUR\",\n    \"money\": {\n        \"amount\": \"Ten\",\n        \"currencyCode\": \"EUR\"\n    },\n    \"source\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\"\n    },\n    \"contractSource\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\",\n        \"contractNumber\": \"string\"\n    },\n    \"counterparty\": {\n        \"accountNumbers\": [\n            {\n                \"accountNumber\": {\n                    \"value\": \"DE30230958595700830436\",\n                    \"type\": \"IBAN\"\n                },\n                \"financialInstitutionId\": {\n                    \"value\": \"MAINDE2XXXX\",\n                    \"type\": \"BIC\"\n                }\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{account_base_url}}/api/v5/accounts/:accountId/transactions",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v5",
+										"accounts",
+										":accountId",
+										"transactions"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "890000",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Creates a new transaction for an account"
+							},
+							"response": []
+						},
+						{
+							"name": "Not Found - incorrect IBAN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"The response status code should be 400\", function () {",
+											"  pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return value message\", function () {",
+											"  pm.expect(response.errors).not.to.be.null;",
+											"  pm.expect(response.validationErrors).not.to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Error code should be present in errors array\", function () {",
+											"  pm.expect(response.errors).to.include(\"err.notFound\");",
+											"});",
+											"",
+											"pm.test(\"The Validation error should not be empty\", function () {",
+											"",
+											"  let validationErrors = response.validationErrors;",
+											"",
+											"  pm.expect(validationErrors).to.be.an(\"array\").not.to.be.empty;",
+											"",
+											"  let validationErrorFound = false;",
+											"",
+											"  validationErrors.forEach(function (errorDetail) {",
+											"    error = errorDetail.errors[0]",
+											"",
+											"    if(error.code === 'err.notFound'){",
+											"        validationErrorFound = true; ",
+											"    }",
+											"  });",
+											"  pm.expect(validationErrorFound).to.be.true;",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"errors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"string\"",
+											"            }",
+											"        },",
+											"        \"validationErrors\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"field\": {",
+											"                        \"type\": [\"string\", \"null\"]",
+											"                    },",
+											"                    \"errors\": {",
+											"                        \"type\": \"array\",",
+											"                        \"items\": {",
+											"                            \"type\": \"object\",",
+											"                            \"properties\": {",
+											"                                \"code\": {",
+											"                                    \"type\": \"string\"",
+											"                                },",
+											"                                \"translations\": {",
+											"                                    \"type\": \"object\"",
+											"                                },",
+											"                                \"additionalProperties\": {",
+											"                                    \"type\": \"object\"",
+											"                                }",
+											"                            },",
+											"                            \"required\": [\"code\"]",
+											"                        }",
+											"                    }",
+											"                },",
+											"                \"required\": [\"field\", \"errors\"]",
+											"            }",
+											"        }",
+											"    },",
+											"    \"required\": [\"errors\", \"validationErrors\"]",
+											"}",
+											"",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "x-request-id",
+										"value": "{{$randomUUID}}",
+										"description": "Request id<br><br><i>Example</i> : 0bc43148-c8ea-4765-82f6-56f00ae41f26"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"transactionTypeCode\": \"CARD_PUR\",\n    \"money\": {\n        \"amount\": 10,\n        \"currencyCode\": \"EUR\"\n    },\n    \"source\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\"\n    },\n    \"contractSource\": {\n        \"sourceName\": \"string\",\n        \"sourceRef\": \"string\",\n        \"contractNumber\": \"string\"\n    },\n    \"counterparty\": {\n        \"accountNumbers\": [\n            {\n                \"accountNumber\": {\n                    \"value\": \"TL550410043073285036333\",\n                    \"type\": \"IBAN\"\n                },\n                \"financialInstitutionId\": {\n                    \"value\": \"MAINDE2XXXX\",\n                    \"type\": \"BIC\"\n                }\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{auth_base_url}}/api/v5/accounts/:accountId/transactions",
+									"host": [
+										"{{auth_base_url}}"
+									],
+									"path": [
+										"api",
+										"v5",
+										"accounts",
+										":accountId",
+										"transactions"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Creates a new transaction for an account"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search transactions with totals",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"const responseData = response.data;",
+											"",
+											"pm.test(\"The response status code should be 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return null\", function () {",
+											"  pm.expect(response.errors).to.be.null;",
+											"  pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 300ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
+											"});",
+											"",
+											"pm.test(\"The Data object exists and is valid\", function () {",
+											"    pm.response.to.have.jsonBody('data');",
+											" pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.all.keys('values', 'pageNumber', 'pageSize', 'endReached', 'sort', 'total', 'totalsPerCurrency');",
+											"    ",
+											"});",
+											"",
+											"pm.test(\"The data Value should be an array\", function () {",
+											"    pm.expect(responseData.values).to.be.an('array');",
+											"",
+											"    responseData.values.forEach(function(item){",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item).to.have.all.keys(",
+											"            'accountTransactionId',",
+											"             'groupId', ",
+											"             'postingDate', ",
+											"             'valueDate', ",
+											"             'accountId',",
+											"            'transactionTypeCode', ",
+											"            'transactionSubtypeCode', ",
+											"            'directionCode', ",
+											"            'currencyCode', ",
+											"            'amount', ",
+											"            'initialBalanceAmount', ",
+											"            'filingCode', ",
+											"            'details',",
+											"             'referenceNumber', ",
+											"            'source',",
+											"             'contractSource',",
+											"              'merchantInfo', ",
+											"              'metaInfo', ",
+											"              'createdDTime', ",
+											"            'endToEndId', ",
+											"            'paymentServiceProviderCode',",
+											"             'transactionDTime', ",
+											"             'reversed', ",
+											"            'virtualAccountId',",
+											"             'labels', ",
+											"             'counterparty'",
+											"        );",
+											"",
+											"    })",
+											" ",
+											"    ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/transactions-with-totals?dateFrom=2024-09-14&dateTo=2024-09-16&dateType=POSTING_DATE&pageNumber=3&pageSize=3",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"transactions-with-totals"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2024-09-14"
+										},
+										{
+											"key": "dateTo",
+											"value": "2024-09-16"
+										},
+										{
+											"key": "dateType",
+											"value": "POSTING_DATE"
+										},
+										{
+											"key": "pageNumber",
+											"value": "3"
+										},
+										{
+											"key": "pageSize",
+											"value": "3"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Finds account transactions by transaction ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorised",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/transactions-with-totals?dateFrom=2024-09-14&dateTo=2024-09-16&dateType=POSTING_DATE&pageNumber=3&pageSize=3",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"transactions-with-totals"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2024-09-14"
+										},
+										{
+											"key": "dateTo",
+											"value": "2024-09-16"
+										},
+										{
+											"key": "dateType",
+											"value": "POSTING_DATE"
+										},
+										{
+											"key": "pageNumber",
+											"value": "3"
+										},
+										{
+											"key": "pageSize",
+											"value": "3"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Finds account transactions by transaction ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - Invalid Parameter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 400 Unauthorized \", function () {",
+											"  pm.response.to.have.status(400);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/transactions-with-totals?dateFrom=2024-09-14&dateTo=2024-09-16&dateType=Test&pageNumber=3&pageSize=3",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"transactions-with-totals"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2024-09-14"
+										},
+										{
+											"key": "dateTo",
+											"value": "2024-09-16"
+										},
+										{
+											"key": "dateType",
+											"value": "Test"
+										},
+										{
+											"key": "pageNumber",
+											"value": "3"
+										},
+										{
+											"key": "pageSize",
+											"value": "3"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Finds account transactions by transaction ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Bad Request - Invalid Parameter Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 400 Bad request \", function () {",
+											"  pm.response.to.have.status(400);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response time should be less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/transactions-with-totals?dateFrom=2024-09-14&dateTo=2024-09-16&dateType=Test&pageNumber=3&pageSize=3",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"transactions-with-totals"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2024-09-14"
+										},
+										{
+											"key": "dateTo",
+											"value": "2024-09-16"
+										},
+										{
+											"key": "dateType",
+											"value": "Test"
+										},
+										{
+											"key": "pageNumber",
+											"value": "3"
+										},
+										{
+											"key": "pageSize",
+											"value": "3"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}"
+										}
+									]
+								},
+								"description": "Finds account transactions by transaction ID"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "balances",
+			"item": [
+				{
+					"name": "find account balance",
+					"item": [
+						{
+							"name": "OK",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const Response = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"All errors in the response should return null\", function () {",
+											"  pm.expect(Response.errors).to.be.null;",
+											"  pm.expect(Response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"const schema = {",
+											"  ",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"errors\": { \"type\": [\"array\", \"null\"] },",
+											"    \"validationErrors\": { \"type\": [\"array\", \"null\"] },",
+											"    \"data\": {",
+											"      \"type\": \"array\",",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"balanceId\": { \"type\": \"string\" },",
+											"          \"accountId\": { \"type\": \"string\" },",
+											"          \"currencyCode\": { \"type\": \"string\" },",
+											"          \"defaultCurrencyCode\": { \"type\": \"string\" },",
+											"          \"balanceAmount\": { \"type\": \"number\" },",
+											"          \"reservedAmount\": { \"type\": \"number\" },",
+											"          \"overdraftLimitAmount\": { \"type\": \"number\" },",
+											"          \"availableBalanceInDefaultCcy\": { \"type\": \"number\" },",
+											"          \"negativeBalanceStartDate\": { \"type\": [\"string\", \"null\"] }, ",
+											"          \"availableBalanceAmount\": { \"type\": \"number\" }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validData = ajv.compile(schema);",
+											"const isValid = validData(Response);",
+											"",
+											"pm.test('Schema is valid', function () {",
+											"  pm.expect(isValid).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/balances?currencyCode=EUR",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"balances"
+									],
+									"query": [
+										{
+											"key": "currencyCode",
+											"value": "EUR",
+											"description": "Currency code"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Finds account balances information in the requested currency"
+							},
+							"response": []
+						},
+						{
+							"name": "Unauthorised",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code should be 401 Unauthorized \", function () {",
+											"  pm.response.to.have.status(401);",
+											"  ",
+											"});",
+											"",
+											"pm.test(\"Response body should  be undefined\", function () {",
+											"    let responseBody = pm.response.text();",
+											"    pm.expect(responseBody).not.to.be.undefined; ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/balances?currencyCode=EUR",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"balances"
+									],
+									"query": [
+										{
+											"key": "currencyCode",
+											"value": "EUR",
+											"description": "Currency code"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{accountId}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Finds account balances information in the requested currency"
+							},
+							"response": []
+						},
+						{
+							"name": "With invalid Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											" const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).be.an(\"array\").that .is.empty; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    const response = pm.response.json();",
+											"        pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"array\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									},
+									{
+										"key": "x-auth-token",
+										"value": "{{authToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/balances?currencyCode=EUR",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"balances"
+									],
+									"query": [
+										{
+											"key": "currencyCode",
+											"value": "EUR",
+											"description": "Currency code"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "9999",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Finds account balances information in the requested currency"
+							},
+							"response": []
+						},
+						{
+							"name": "Empty Parameter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											" const response = pm.response.json();",
+											"",
+											"pm.test(\"The Data field should be null\", () => {",
+											"    pm.expect(response.data).be.an(\"array\").that .is.empty; ",
+											"});",
+											"",
+											"pm.test(\"All response Errors and validationErrors should be null\", () => {",
+											"    const response = pm.response.json();",
+											"        pm.expect(response.errors).to.be.null;",
+											"    pm.expect(response.validationErrors).to.be.null;",
+											"});",
+											"",
+											"pm.test(\"Status code is 200 OK, but expected 404 for missing data\", () => {",
+											"    pm.response.to.have.status(200);  ",
+											"    console.warn(\"Warning: Expected a 404 for missing data, but got 200 OK.\");",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 200ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);",
+											"});",
+											"",
+											"const schema = {",
+											"    \"type\" : \"object\",",
+											"    \"properties\" : {",
+											"        \"errors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"validationErrors\" :{\"type\" : [\"array\",\"null\"]},",
+											"        \"data\" : {\"type\": [\"array\", \"null\"]}",
+											"    }",
+											"}",
+											"",
+											"const Ajv = require(\"ajv\");",
+											"const ajv = new Ajv();",
+											"const validateResponse= ajv.compile(schema); ",
+											"pm.test(\"Response should matches the schema\", function() {",
+											"    pm.expect(validateResponse(response)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{authToken}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-auth-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-channel-code",
+										"value": "SYSTEM",
+										"description": "Channel code"
+									},
+									{
+										"key": "x-tenant-code",
+										"value": "MB",
+										"description": "Tenant code"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en",
+										"description": "Accept language"
+									},
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{account_base_url}}/api/v1/accounts/:accountId/balances?currencyCode=EUR",
+									"host": [
+										"{{account_base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										":accountId",
+										"balances"
+									],
+									"query": [
+										{
+											"key": "currencyCode",
+											"value": "EUR",
+											"description": "Currency code"
+										}
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": ""
+										}
+									]
+								},
+								"description": "Finds account balances information in the requested currency"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "newIdNum",
+			"value": ""
+		},
+		{
+			"key": "refNum",
+			"value": ""
+		}
+	]
+}
